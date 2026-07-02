@@ -155,7 +155,7 @@ calculate_RC = function(trait_values, lower_fraction = 0.5, upper_fraction = 0.5
 
 ################################
 
-#' Relative trait range (RTR)
+#' Relative Trait Response (RTR)
 #'
 #' Compares mean trait values at the low and high ends of an environmental
 #' gradient, normalized by the maximum absolute trait value.
@@ -208,7 +208,7 @@ calculate_RTR = function(trait_values, env_values, env_low = 0.2, env_high = 0.2
 
 ################################
 
-#' Plasticity index at relative growth rate maximum (PIR)
+#' Phenotypic Instability Ratio (PIR)
 #'
 #' Computes environment-level means of a trait, estimates (or accepts) relative
 #' growth rates between successive environments, and expresses the trait range
@@ -350,7 +350,7 @@ calculate_plasticity = function(trait_values, env_values = NULL, max_degree = 3,
 
 ################################
 
-#' Finlay-Wilkinson stability regression
+#' Finlay-Wilkinson regression
 #'
 #' Regresses each genotype's trait values on an environmental index (by default
 #' the centered environment means) to estimate Finlay-Wilkinson stability

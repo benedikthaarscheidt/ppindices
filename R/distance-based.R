@@ -60,7 +60,7 @@ calculate_rdpi = function(trait_values, env_values = NULL) {
 
 ################################
 
-#' Environment-standardized plasticity index (ESPI)
+#' Environmental Sensitivity Performance Index (ESPI)
 #'
 #' Computes the range of environment-level trait means, standardized by the
 #' range of the environment values. Accepts a single trait (numeric vector) or
@@ -118,7 +118,7 @@ calculate_ESPI = function(trait_values, env_values = NULL) {
 
 ################################
 
-#' Environment-standardized plasticity index with individual distances (ESPIID)
+#' Environmental Sensitivity Performance Index for Individual Differences (ESPIID)
 #'
 #' For every pair of (equidistant) environments, computes the mean (or median)
 #' absolute pairwise difference between individual trait values in the two
@@ -190,7 +190,7 @@ calculate_espiid = function(trait_values, use_median = FALSE) {
 
 ################################
 
-#' Median-based phenotypic plasticity index (PImd)
+#' Proportional Inter-Median Difference (PImd)
 #'
 #' Computes environment-level medians of a trait and expresses their range
 #' relative to the maximum median.
@@ -233,7 +233,7 @@ calculate_PImd = function(trait_values, env) {
 
 ################################
 
-#' Least-squares-mean phenotypic plasticity index (PILSM)
+#' Proportional Inter-Least Square Mean Difference (PILSM)
 #'
 #' Fits a linear model of trait values on environment (optionally adjusting for
 #' covariates), extracts least-squares means per environment via `emmeans`, and
@@ -283,7 +283,7 @@ calculate_PILSM = function(trait_values, env, covariates = NULL) {
 
 ################################
 
-#' General phenotypic distance (PD)
+#' General Plasticity Differential (PD)
 #'
 #' Computes a distance-based plasticity measure between environments, either
 #' from an explicit control/stress grouping vector, or via one of three
@@ -387,7 +387,7 @@ calculate_general_PD = function(trait_values, env_values = NULL, control_stress_
 
 ################################
 
-#' Fitness-relative plasticity index (FPI)
+#' Fitness Plasticity Index (FPI)
 #'
 #' Computes the relative change in trait value between environments (or
 #' between control and stress conditions), expressed as a fraction of the
@@ -480,7 +480,7 @@ calculate_FPI = function(trait_values, env_values = NULL, control_stress = NULL)
 
 ################################
 
-#' Transplant phenotypic shift (TPS)
+#' Transplant Plasticity Score (TPS)
 #'
 #' Computes the relative change in trait value between a native environment and
 #' a transplanted environment, expressed as a fraction of the native value.
@@ -526,7 +526,7 @@ calculate_TPS = function(trait_values, env_values, native_env, transplanted_env)
 
 ################################
 
-#' Daily plasticity index (DPI)
+#' Developmental Plasticity Index (DPI)
 #'
 #' Computes the rate of change in trait value between two time points, divided
 #' by the elapsed time interval.

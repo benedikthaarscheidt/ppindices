@@ -54,7 +54,7 @@ calculate_grand_plasticity = function(trait_values, env_data, covariate_data = N
 
 ################################
 
-#' Pairwise phenotypic plasticity factor (PPF)
+#' Phenotypic Plasticity Factor (PPF) 
 #'
 #' For each pair of environment groups (all pairs by default), fits a linear
 #' model and computes the percentage difference between the least-squares means
@@ -236,7 +236,7 @@ calculate_PQ = function(trait_values, env_values = NULL) {
 
 ################################
 
-#' Plasticity range (PR)
+#' Phenotypic Range (PR)
 #'
 #' Computes the range (max - min) of trait values, either across all
 #' environments at once or separately within each unique environment.
@@ -340,7 +340,7 @@ calculate_NRW = function(trait_values, env_values = NULL, group_values = NULL, a
 
 ################################
 
-#' Environment-specific plasticity (ESP)
+#' Environmental Sensitivity Performance (ESP)
 #'
 #' Computes, for each environment, the relative deviation of its mean trait
 #' value from the overall mean, and sums the absolute deviations across
@@ -468,7 +468,7 @@ calculate_RPI = function(trait_values, env_values = NULL, env1 = NULL, env2 = NU
 
 ################################
 
-#' Plasticity focus index (PFI)
+#' Phenotypic Flexibility Index (PFI)
 #'
 #' Identifies the sample with the largest absolute deviation from a baseline
 #' and expresses that deviation relative to its own baseline.
@@ -527,7 +527,7 @@ calculate_PFI <- function(trait_values, baseline_values = NULL) {
 
 ################################
 
-#' Average plasticity of consecutive environments (APC)
+#' Absolute Plasticity Coefficient (APC)
 #'
 #' Orders observations by environment, computes per-environment means, and
 #' averages the absolute differences between consecutive environment means.

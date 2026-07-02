@@ -25,7 +25,7 @@ calculate_CVt = function(trait_values) {
 
 ################################
 
-#' Coefficient of variation of group means (CVm)
+#' Coefficient of variation of means (CVm)
 #'
 #' Computes the coefficient of variation across group (e.g. environment) means of
 #' a trait, where groups are supplied either as a list of vectors or via
@@ -67,7 +67,7 @@ calculate_CVm = function(trait_values, env_values = NULL) {
 
 ################################
 
-#' Coefficient of variation of group medians (CVmd)
+#' Coefficient of variation of medians (CVmd)
 #'
 #' Computes the coefficient of variation across group (e.g. environment) medians
 #' of a trait, where groups are supplied either as a list of vectors or via
@@ -144,7 +144,7 @@ calculate_CEV = function(trait_values) {
 
 ################################
 
-#' Environmental variance sensitivity (EVS)
+#' Environmental Variance Sensitivity (EVS)
 #'
 #' Computes the ratio of trait variance to environmental variance, a measure of
 #' how much trait variability is expressed relative to the spread of the
@@ -199,7 +199,7 @@ calculate_EVS <- function(trait_values, env = NULL) {
 
 ################################
 
-#' Plasticity stability score (PSI)
+#' Plasticity stability Index (PSI)
 #'
 #' Fits a linear regression of trait values on environmental values and converts
 #' the slope into a bounded stability score.
