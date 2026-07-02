@@ -43,7 +43,7 @@ impute = function(mt, mode = "median") {
       idx = which(!is.na(mt[, i]))
       colname = colnames(mt)[i]
       frm = as.formula(paste(colname, "~ ."))
-      mod = rpart(frm, data = mt[idx, ], method = ifelse(is.factor(mt[, i]), "class", "anova"))
+      mod = rpart::rpart(frm, data = mt[idx, ], method = ifelse(is.factor(mt[, i]), "class", "anova"))
       vals = predict(mod, newdata = mt[midx, ], type = ifelse(is.factor(mt[, i]), "class", "vector"))
       mt[midx, i] = vals
     }

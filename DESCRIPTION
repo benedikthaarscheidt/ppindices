@@ -16,9 +16,8 @@ Depends:
 Imports:
     stats,
     utils,
-    dplyr,
-    purrr,
-    reshape2,
+    graphics,
+    rpart,
     ggplot2,
     agricolae,
     emmeans,
@@ -26,6 +25,9 @@ Imports:
 Suggests:
     testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    dplyr,
+    purrr,
+    reshape2
 Config/testthat/edition: 3
 VignetteBuilder: knitr

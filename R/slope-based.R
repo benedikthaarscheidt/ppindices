@@ -405,7 +405,7 @@ calculate_finlay_wilkinson <- function(Y, genotype_ids=NULL, env_values=NULL, pl
   })
   res <- do.call(rbind, res_list); rownames(res) <- res$genotype
   if (plot) {
-    plot(NA, xlim=range(X, na.rm=TRUE), ylim=range(Y, na.rm=TRUE), xlab=xlab, ylab="Trait Y_ij", main="Finlay–Wilkinson")
+    plot(NA, xlim=range(X, na.rm=TRUE), ylim=range(Y, na.rm=TRUE), xlab=xlab, ylab="Trait Y_ij", main="Finlay\u2013Wilkinson")
     cols <- setNames(seq_len(nrow(Y)), gnames)
     for (i in seq_len(nrow(Y))) {
       y <- as.numeric(Y[i, ])
