@@ -1,0 +1,84 @@
+---
+title: "Computing plasticity indices"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Computing plasticity indices}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+This vignette walks through computing a handful of `ppindices` plasticity
+indices on a small, toy reaction norm. A reaction norm here is simply a set of
+trait measurements for one genotype, taken across several environments.
+
+```{r setup}
+library(ppindices)
+```
+
+## A toy reaction norm
+
+Suppose a genotype was measured in four environments, with trait values
+increasing steadily as the environment changes:
+
+```{r}
+trait_values <- c(2, 4, 6, 8)
+environments <- c(1, 2, 3, 4)
+```
+
+## Coefficient of variation of trait values
+
+`calculate_CVt()` computes the coefficient of variation of the trait values
+across environments — a simple, scale-independent measure of overall
+variability:
+
+```{r}
+calculate_CVt(trait_values)
+```
+
+## Reaction norm slope
+
+`calculate_reaction_norm_slope()` fits a linear regression of the trait
+values on the environmental values and returns the slope, describing the
+linear rate of phenotypic change across environments:
+
+```{r}
+calculate_reaction_norm_slope(trait_values, environments = environments)
+```
+
+## Relative distance plasticity index (RDPI)
+
+`calculate_rdpi()` averages the relative distance between trait values over
+all pairs of environments:
+
+```{r}
+calculate_rdpi(trait_values, env_values = environments)
+```
+
+## Environment-specific plasticity (ESP)
+
+`calculate_ESP()` sums the absolute relative deviations of each
+environment's mean trait value from the overall mean. Here each environment
+label is repeated to represent two replicate measurements per environment:
+
+```{r}
+env_labels <- c(1, 1, 2, 2)
+calculate_ESP(trait_values, env_values = env_labels)
+```
+
+## Summary
+
+These four indices illustrate the range of approaches implemented in
+`ppindices`: variance-based (`calculate_CVt`), slope-based
+(`calculate_reaction_norm_slope`), distance-based (`calculate_rdpi`), and
+index-based (`calculate_ESP`) measures of phenotypic plasticity. The package
+provides 43 such indices in total; see `help(package = "ppindices")` for the
+complete list.
