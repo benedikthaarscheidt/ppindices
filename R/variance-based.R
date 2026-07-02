@@ -1,3 +1,15 @@
+#' Coefficient of variation of trait values (CV_t)
+#'
+#' Computes the coefficient of variation across a genotype's trait values measured
+#' over multiple environments.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments,
+#'   with no missing values.
+#' @return A single numeric value: the coefficient of variation
+#'   (`sd(trait_values) / mean(trait_values)`).
+#' @examples
+#' calculate_CVt(c(2, 4, 6, 8))
+#' @export
 calculate_CVt = function(trait_values) {
   if (length(trait_values) < 2) {
     return(NA)  # Avoid division by zero for single values
@@ -13,6 +25,25 @@ calculate_CVt = function(trait_values) {
 
 ################################
 
+#' Coefficient of variation of group means (CVm)
+#'
+#' Computes the coefficient of variation across group (e.g. environment) means of
+#' a trait, where groups are supplied either as a list of vectors or via
+#' `group_labels`.
+#'
+#' @param trait_values Either a list of numeric vectors (one per group) or a
+#'   numeric vector of trait measurements to be split by `env_values`.
+#' @param env_values Optional grouping vector used to split `trait_values` when
+#'   `trait_values` is not already a list.
+#' @return A single numeric value: the coefficient of variation of the group means.
+#' @note The example below is illustrative only and is wrapped in `\dontrun{}`
+#'   because the non-list branch of this function references an undefined
+#'   `group_labels` object rather than its `env_values` argument.
+#' @examples
+#' \dontrun{
+#' calculate_CVm(list(c(2, 3, 4), c(5, 6, 7), c(1, 2, 3)))
+#' }
+#' @export
 calculate_CVm = function(trait_values, env_values = NULL) {
   # Handle case where trait_values is a list of vectors
   if (is.list(trait_values)) {
@@ -36,6 +67,20 @@ calculate_CVm = function(trait_values, env_values = NULL) {
 
 ################################
 
+#' Coefficient of variation of group medians (CVmd)
+#'
+#' Computes the coefficient of variation across group (e.g. environment) medians
+#' of a trait, where groups are supplied either as a list of vectors or via
+#' `group_labels`.
+#'
+#' @param trait_values Either a list of numeric vectors (one per group) or a
+#'   numeric vector of trait measurements to be split by `group_labels`.
+#' @param group_labels Optional grouping vector used to split `trait_values` when
+#'   `trait_values` is not already a list.
+#' @return A single numeric value: the coefficient of variation of the group medians.
+#' @examples
+#' calculate_CVmd(c(2, 4, 6, 8, 10, 12), group_labels = c(1, 1, 2, 2, 3, 3))
+#' @export
 calculate_CVmd = function(trait_values, group_labels = NULL) {
   # Handle case where trait_values is a list of vectors
   if (is.list(trait_values)) {
@@ -59,6 +104,18 @@ calculate_CVmd = function(trait_values, group_labels = NULL) {
 
 ################################
 
+#' Coefficient of environmental variation (CEV)
+#'
+#' Computes the coefficient of variation of a trait across environments, expressed
+#' as a percentage.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @return A single numeric value: `100 * sd(trait_values) / mean(trait_values)`.
+#'   Returns a list with `CEV = NA` (plus `Mean`, `SD`, `Valid`) when fewer than
+#'   two values are supplied or the mean is zero.
+#' @examples
+#' calculate_CEV(c(2, 4, 6, 8))
+#' @export
 calculate_CEV = function(trait_values) {
   # Ensure input is a numeric vector
   if (!is.numeric(trait_values)) {
@@ -87,6 +144,20 @@ calculate_CEV = function(trait_values) {
 
 ################################
 
+#' Environmental variance sensitivity (EVS)
+#'
+#' Computes the ratio of trait variance to environmental variance, a measure of
+#' how much trait variability is expressed relative to the spread of the
+#' environmental gradient.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env Optional numeric or factor vector of environment values, the same
+#'   length as `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @return A single numeric value: `var(trait_values) / var(env)`. Returns `NA`
+#'   with a warning when the environmental variance is zero.
+#' @examples
+#' calculate_EVS(c(2, 4, 6, 8), env = c(1, 2, 3, 4))
+#' @export
 calculate_EVS <- function(trait_values, env = NULL) {
   # Validate trait_values
   if (!is.numeric(trait_values)) {
@@ -128,6 +199,19 @@ calculate_EVS <- function(trait_values, env = NULL) {
 
 ################################
 
+#' Plasticity stability score (PSI)
+#'
+#' Fits a linear regression of trait values on environmental values and converts
+#' the slope into a bounded stability score.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env_values Optional numeric vector of environment values, the same
+#'   length as `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @return A single numeric value in `(0, 1]`: `1 / (1 + abs(slope))`, where
+#'   `slope` is the coefficient from regressing `trait_values` on `env_values`.
+#' @examples
+#' calculate_PSI(c(2, 4, 6, 8), env_values = c(1, 2, 3, 4))
+#' @export
 calculate_PSI = function(trait_values, env_values = NULL) {
   # Input validation
   if (!is.numeric(trait_values)) {
@@ -170,6 +254,20 @@ calculate_PSI = function(trait_values, env_values = NULL) {
 
 ################################
 
+#' Relative stability index (RSI)
+#'
+#' Computes a stability index based on the coefficient of variation of
+#' environment-level trait means, expressed as `1 - CV`.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env Optional grouping vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n` (each
+#'   observation its own environment).
+#' @return A single numeric value: `1 - sd(env_means) / mean(env_means)`. Returns
+#'   `NA` with a warning when the overall mean of environment means is zero.
+#' @examples
+#' calculate_RSI(c(2, 4, 6, 8), env = c(1, 1, 2, 2))
+#' @export
 calculate_RSI <- function(trait_values, env = NULL) {
   # Validate trait_values
   if (!is.numeric(trait_values)) {
@@ -205,6 +303,20 @@ calculate_RSI <- function(trait_values, env = NULL) {
 
 ################################
 
+#' Stability index (SI)
+#'
+#' Computes a stability index as the variance of environment-level trait means
+#' relative to their overall mean.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env Optional grouping vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n` (each
+#'   observation its own environment).
+#' @return A single numeric value: `var(env_means) / mean(env_means)`. Returns
+#'   `NA` with a warning when the overall mean of environment means is zero.
+#' @examples
+#' calculate_SI(c(2, 4, 6, 8), env = c(1, 1, 2, 2))
+#' @export
 calculate_SI <- function(trait_values, env = NULL) {
   # Validate trait_values
   if (!is.numeric(trait_values)) {
@@ -240,6 +352,22 @@ calculate_SI <- function(trait_values, env = NULL) {
 
 ################################
 
+#' Cross-environment covariance and correlation
+#'
+#' Computes the covariance (and optionally the correlation) between trait values
+#' and environmental values.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env_values Optional numeric vector of environment values, the same
+#'   length as `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param return_correlation Logical; if `TRUE`, also compute and return the
+#'   Pearson correlation between `trait_values` and `env_values`.
+#' @return A list with element `covariance` (and `correlation` when
+#'   `return_correlation = TRUE`).
+#' @examples
+#' cross_env_cov(c(2, 4, 6, 8), env_values = c(1, 2, 3, 4))
+#' cross_env_cov(c(2, 4, 6, 8), env_values = c(1, 2, 3, 4), return_correlation = TRUE)
+#' @export
 cross_env_cov = function(trait_values, env_values = NULL, return_correlation = FALSE) {
   # Input validation
   if (!is.numeric(trait_values)) {

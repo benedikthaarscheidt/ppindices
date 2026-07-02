@@ -1,3 +1,16 @@
+#' Impute missing values in a matrix or data frame
+#'
+#' Fills in missing (`NA`) values of a numeric matrix or data frame column by column,
+#' using one of several imputation strategies. Factor columns are left untouched.
+#'
+#' @param mt A matrix or data frame with missing values to impute.
+#' @param mode Imputation strategy: `"median"`, `"mean"`, `"rpart"` (regression-tree
+#'   imputation, requires the `rpart` package), or `"knn"` (k-nearest-neighbour
+#'   imputation via the `VIM` package).
+#' @return A matrix or data frame of the same class and dimensions as `mt`, with
+#'   missing values filled in.
+#' @keywords internal
+#' @noRd
 impute = function(mt, mode = "median") {
   if (!is.matrix(mt) && !is.data.frame(mt)) {
     stop("Input must be a matrix or data frame")
@@ -57,6 +70,22 @@ impute = function(mt, mode = "median") {
 
 ################################
 
+#' Combine data frame columns and external vectors into one interaction factor
+#'
+#' Builds a single `Combined_Factors` column on a data frame by taking the
+#' interaction of one or more existing columns and/or externally supplied
+#' vectors. Used to build the grouping factor consumed by
+#' `rdpi_mean_calculation()` and related dataframe-based helpers.
+#'
+#' @param dataframe A data frame to augment with a `Combined_Factors` column.
+#' @param factors Optional character vector of column names (or numeric column
+#'   indices) in `dataframe` to combine.
+#' @param factors_not_in_dataframe Optional list of vectors, external to
+#'   `dataframe`, to combine with (or in place of) `factors`. Each element must
+#'   have length equal to `nrow(dataframe)`.
+#' @return `dataframe` with an added factor column `Combined_Factors`.
+#' @keywords internal
+#' @noRd
 combine_factors = function(dataframe, factors = NULL, factors_not_in_dataframe = NULL) {
   # Combine internal and external factors into a single dataframe
   if (!is.null(factors_not_in_dataframe)) {

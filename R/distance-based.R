@@ -1,3 +1,16 @@
+#' Relative distance plasticity index (RDPI)
+#'
+#' Computes, for every pair of environments, the relative distance between
+#' trait values (`abs(x2 - x1) / (x1 + x2)`), and averages across all pairs.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env_values Optional vector of environment values, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @return A single numeric value: the mean relative distance across all
+#'   pairwise environment comparisons.
+#' @examples
+#' calculate_rdpi(c(2, 4, 6, 8), env_values = c(1, 2, 3, 4))
+#' @export
 calculate_rdpi = function(trait_values, env_values = NULL) {
   # Input validation
   if (!is.numeric(trait_values)) {
@@ -47,6 +60,22 @@ calculate_rdpi = function(trait_values, env_values = NULL) {
 
 ################################
 
+#' Environment-standardized plasticity index (ESPI)
+#'
+#' Computes the range of environment-level trait means, standardized by the
+#' range of the environment values. Accepts a single trait (numeric vector) or
+#' multiple traits (columns of a data frame).
+#'
+#' @param trait_values A numeric vector of trait measurements, or a data frame
+#'   where each column is a trait.
+#' @param env_values Optional vector of environment values. For the
+#'   single-trait (vector) form it must have the same length as `trait_values`.
+#'   Defaults to equidistant indices `1, 2, ..., n`.
+#' @return A single numeric value for a vector input, or a named numeric vector
+#'   (one value per trait column) for a data frame input.
+#' @examples
+#' calculate_ESPI(c(2, 3, 6, 7), env_values = c(1, 1, 2, 2))
+#' @export
 calculate_ESPI = function(trait_values, env_values = NULL) {
 
   if (is.null(env_values)) {
@@ -89,6 +118,22 @@ calculate_ESPI = function(trait_values, env_values = NULL) {
 
 ################################
 
+#' Environment-standardized plasticity index with individual distances (ESPIID)
+#'
+#' For every pair of (equidistant) environments, computes the mean (or median)
+#' absolute pairwise difference between individual trait values in the two
+#' environments, standardized by the distance between environment indices, and
+#' averages across all pairs.
+#'
+#' @param trait_values Numeric vector of trait measurements across equidistant
+#'   environments (each element is one observation, in environment order).
+#' @param use_median Logical; if `TRUE`, use the median absolute pairwise
+#'   difference instead of the mean. Defaults to `FALSE`.
+#' @return A single numeric value: the mean ESPIID across all environment
+#'   pairs.
+#' @examples
+#' calculate_espiid(c(2, 4, 6, 8))
+#' @export
 calculate_espiid = function(trait_values, use_median = FALSE) {
 
   env_values = seq_along(trait_values) # Create equidistant environment indices
@@ -145,6 +190,19 @@ calculate_espiid = function(trait_values, use_median = FALSE) {
 
 ################################
 
+#' Median-based phenotypic plasticity index (PImd)
+#'
+#' Computes environment-level medians of a trait and expresses their range
+#' relative to the maximum median.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env Vector of environment labels, the same length as `trait_values`;
+#'   coerced to a factor.
+#' @return A single numeric value: `(max(medians) - min(medians)) / max(medians)`.
+#'   Returns `NA` with a warning when the maximum median is zero.
+#' @examples
+#' calculate_PImd(c(2, 4, 6, 8), env = factor(c(1, 1, 2, 2)))
+#' @export
 calculate_PImd = function(trait_values, env) {
   # Ensure env is treated as a factor
   if (!is.factor(env)) {
@@ -175,6 +233,23 @@ calculate_PImd = function(trait_values, env) {
 
 ################################
 
+#' Least-squares-mean phenotypic plasticity index (PILSM)
+#'
+#' Fits a linear model of trait values on environment (optionally adjusting for
+#' covariates), extracts least-squares means per environment via `emmeans`, and
+#' expresses their range relative to the maximum least-squares mean.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env Vector of environment labels, the same length as `trait_values`;
+#'   coerced to a factor.
+#' @param covariates Optional numeric vector or data frame of covariates to
+#'   include additively in the model.
+#' @return A single numeric value: `(max_lsm - min_lsm) / max_lsm`.
+#' @examples
+#' trait_values <- c(2, 2.5, 3, 4, 4.5, 5)
+#' env <- factor(rep(c("E1", "E2"), each = 3))
+#' calculate_PILSM(trait_values, env)
+#' @export
 calculate_PILSM = function(trait_values, env, covariates = NULL) {
   # Ensure env is treated as a factor
   if (!is.factor(env)) {
@@ -208,6 +283,26 @@ calculate_PILSM = function(trait_values, env, covariates = NULL) {
 
 ################################
 
+#' General phenotypic distance (PD)
+#'
+#' Computes a distance-based plasticity measure between environments, either
+#' from an explicit control/stress grouping vector, or via one of three
+#' methods: pairwise mean absolute differences across all environment pairs,
+#' differences relative to the lowest-mean reference environment, or the raw
+#' trait range.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_values Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param control_stress_vector Optional vector, the same length as
+#'   `trait_values`, labelling each observation as `"Control"`/`"Stress"` or
+#'   `0`/`1`. When supplied, `method` is ignored.
+#' @param method One of `"pairwise"` (default), `"reference"`, or
+#'   `"variability"`; see Description.
+#' @return A single numeric value summarizing phenotypic distance.
+#' @examples
+#' calculate_general_PD(c(2, 4, 6, 8), env_values = c(1, 1, 2, 2))
+#' @export
 calculate_general_PD = function(trait_values, env_values = NULL, control_stress_vector = NULL, method = "pairwise") {
   if (!is.numeric(trait_values)) stop("trait_values must be numeric.")
 
@@ -292,6 +387,24 @@ calculate_general_PD = function(trait_values, env_values = NULL, control_stress_
 
 ################################
 
+#' Fitness-relative plasticity index (FPI)
+#'
+#' Computes the relative change in trait value between environments (or
+#' between control and stress conditions), expressed as a fraction of the
+#' baseline (control / first) value, averaged across environment pairs.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_values Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param control_stress Optional vector, the same length as `trait_values`,
+#'   labelling each observation as `0`/`1` or `"Control"`/`"Stress"`. When
+#'   supplied, `env_values` pairing is bypassed in favor of a direct
+#'   control-vs-stress comparison.
+#' @return A single numeric value: the mean fractional change in trait value.
+#'   Returns `NA` with a warning when only one unique environment is present.
+#' @examples
+#' calculate_FPI(c(2, 4, 6, 8), env_values = c(1, 1, 2, 2))
+#' @export
 calculate_FPI = function(trait_values, env_values = NULL, control_stress = NULL) {
   # Ensure trait_values is numeric
   if (!is.numeric(trait_values)) stop("trait_values must be a numeric vector.")
@@ -367,6 +480,22 @@ calculate_FPI = function(trait_values, env_values = NULL, control_stress = NULL)
 
 ################################
 
+#' Transplant phenotypic shift (TPS)
+#'
+#' Computes the relative change in trait value between a native environment and
+#' a transplanted environment, expressed as a fraction of the native value.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_values Vector of environment labels, the same length as
+#'   `trait_values`.
+#' @param native_env Label (in `env_values`) of the native environment.
+#' @param transplanted_env Label (in `env_values`) of the transplanted
+#'   environment.
+#' @return A single numeric value: the mean of
+#'   `(transplanted - native) / native`.
+#' @examples
+#' calculate_TPS(c(2, 4, 6, 8), env_values = c(1, 1, 2, 2), native_env = 1, transplanted_env = 2)
+#' @export
 calculate_TPS = function(trait_values, env_values, native_env, transplanted_env) {
   # Ensure trait_values is numeric
   if (!is.numeric(trait_values)) stop("trait_values must be a numeric vector.")
@@ -397,6 +526,20 @@ calculate_TPS = function(trait_values, env_values, native_env, transplanted_env)
 
 ################################
 
+#' Daily plasticity index (DPI)
+#'
+#' Computes the rate of change in trait value between two time points, divided
+#' by the elapsed time interval.
+#'
+#' @param trait_values_time1 Numeric vector of trait measurements at time 1.
+#' @param trait_values_time2 Numeric vector of trait measurements at time 2,
+#'   the same length as `trait_values_time1`.
+#' @param time_interval Optional numeric vector of positive time intervals, the
+#'   same length as `trait_values_time1`. Defaults to a vector of ones.
+#' @return A numeric vector: `(trait_values_time2 - trait_values_time1) / time_interval`.
+#' @examples
+#' calculate_DPI(c(2, 4, 6, 8), c(3, 5, 7, 9))
+#' @export
 calculate_DPI = function(trait_values_time1, trait_values_time2, time_interval = NULL) {
   # Ensure trait values are numeric vectors
   if (!is.numeric(trait_values_time1) || !is.numeric(trait_values_time2)) {

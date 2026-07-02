@@ -1,3 +1,35 @@
+#' RDPI across environment combinations of a data frame
+#'
+#' Builds a combined environment factor from one or more columns of a data
+#' frame (optionally split by species/group), computes the Relative Distance
+#' Plasticity Index (RDPI) between every pair of combined environment levels
+#' for each trait, and optionally runs ANOVA and Tukey's HSD across the
+#' combined factor levels.
+#'
+#' @param dataframe A data frame containing trait, environment/factor, and
+#'   (optionally) species columns.
+#' @param trait_cols Character or numeric vector identifying trait columns in
+#'   `dataframe`.
+#' @param sp Optional column name or index identifying a species/group column
+#'   used to split the analysis.
+#' @param factors Optional character vector of column names (or numeric column
+#'   indices) in `dataframe` combined into the environment factor.
+#' @param factors_not_in_dataframe Optional list of vectors, external to
+#'   `dataframe`, combined with (or in place of) `factors`.
+#' @param stat_analysis Optional flag; when non-`NULL`, also runs ANOVA and
+#'   Tukey's HSD per trait and returns boxplots.
+#' @return A data frame of RDPI values with columns `sp`, `env1`, `env2`,
+#'   `rdpi` (one row per species x trait x environment pair). When
+#'   `stat_analysis` is supplied, returns a list with elements `rdpi_results`,
+#'   `trait_boxplots`, `anova_results`, and `tukey_results`.
+#' @examples
+#' df <- data.frame(
+#'   trait1 = c(2, 3, 4, 5, 6, 7, 8, 9),
+#'   envA = rep(c("low", "high"), each = 4),
+#'   envB = rep(c("x", "y"), times = 4)
+#' )
+#' rdpi_mean_calculation(df, trait_cols = "trait1", factors = c("envA", "envB"))
+#' @export
 rdpi_mean_calculation = function(dataframe, trait_cols, sp = NULL, factors = NULL, factors_not_in_dataframe = NULL, stat_analysis = NULL) {
 
   # Convert column indices to names if necessary
@@ -122,6 +154,38 @@ rdpi_mean_calculation = function(dataframe, trait_cols, sp = NULL, factors = NUL
 
 ################################
 
+#' Environment-variance-weighted plasticity index (EVWPI)
+#'
+#' Computes, for each species/group and trait, the mean (or median) absolute
+#' pairwise phenotypic distance between individuals in different environments,
+#' standardized by weights derived from the variance of one or more grouping
+#' factors. This is an early prototype metric that has not been fully
+#' developed.
+#'
+#' @param dataframe A data frame containing trait, environment, and factor
+#'   columns.
+#' @param trait_cols Character or numeric vector identifying trait columns in
+#'   `dataframe`.
+#' @param sp Optional column name or index identifying a species/group column
+#'   used to split the analysis.
+#' @param env_col Numeric column index in `dataframe` identifying the
+#'   environment column.
+#' @param factors Character vector of column names (or numeric column indices)
+#'   in `dataframe`, or a list of external vectors, used to compute
+#'   variance-based weights.
+#' @param use_median Logical; if `TRUE`, use the median absolute pairwise
+#'   difference instead of the mean. Defaults to `FALSE`.
+#' @return A named list (one element per species/group) of data frames with
+#'   columns `sp`, `trait`, `evwpi`.
+#' @examples
+#' df <- data.frame(
+#'   trait1 = c(2, 3, 4, 5, 6, 7, 8, 9),
+#'   env = rep(c("E1", "E2"), each = 4),
+#'   factorA = c(1, 1, 2, 2, 1, 1, 2, 2),
+#'   factorB = c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2)
+#' )
+#' evwpi_calculation(df, trait_cols = "trait1", env_col = 2, factors = c("factorA", "factorB"))
+#' @export
 evwpi_calculation = function(dataframe, trait_cols, sp = NULL, env_col, factors, use_median = FALSE) {
   # NOTE: this was an early idea and needs further development
 
@@ -210,6 +274,28 @@ evwpi_calculation = function(dataframe, trait_cols, sp = NULL, env_col, factors,
 
 ################################
 
+#' Standardized plasticity index (SPI) for a data frame of traits
+#'
+#' For each trait column, computes the difference in mean trait value between
+#' two environments, standardized by the standard deviation of a reference
+#' environment.
+#'
+#' @param data A data frame containing trait and environment columns.
+#' @param env_col Column name (or numeric index / vector) identifying the
+#'   environment for each row of `data`.
+#' @param trait_cols Character or numeric vector identifying trait columns in
+#'   `data`.
+#' @param env1 Label (in `env_col`) of the first environment to compare.
+#' @param env2 Label (in `env_col`) of the second environment to compare.
+#' @param reference_env Label (in `env_col`) of the environment used to
+#'   estimate the standardizing standard deviation.
+#' @return A named numeric vector of SPI values, one per trait in
+#'   `trait_cols`.
+#' @examples
+#' df <- data.frame(trait1 = c(2, 3, 4, 5, 6, 7, 8, 9), env = rep(c("E1", "E2"), each = 4))
+#' calculate_SPI(df, env_col = "env", trait_cols = "trait1", env1 = "E1", env2 = "E2",
+#'               reference_env = "E1")
+#' @export
 calculate_SPI = function(data, env_col, trait_cols, env1, env2, reference_env) {
 
   # Handle env_col
@@ -251,6 +337,25 @@ calculate_SPI = function(data, env_col, trait_cols, env1, env2, reference_env) {
 
 ################################
 
+#' Standardized plasticity metric (SPM)
+#'
+#' Computes the relative difference in mean trait value between a resident and
+#' a nonresident environment, standardized by the resident-environment mean.
+#'
+#' @param data A data frame containing trait and environment columns.
+#' @param env_col Column name (or numeric index / vector) identifying the
+#'   environment for each row of `data`.
+#' @param trait_col Column name identifying the trait column in `data`.
+#' @param resident_env Label (in `env_col`) of the resident (home) environment.
+#' @param nonresident_env Label (in `env_col`) of the nonresident (away)
+#'   environment.
+#' @return A single numeric value:
+#'   `abs(mean_resident - mean_nonresident) / mean_resident`.
+#' @examples
+#' df <- data.frame(trait1 = c(2, 3, 4, 5, 6, 7, 8, 9), env = rep(c("E1", "E2"), each = 4))
+#' calculate_SPM(df, env_col = "env", trait_col = "trait1", resident_env = "E1",
+#'               nonresident_env = "E2")
+#' @export
 calculate_SPM = function(data, env_col, trait_col, resident_env, nonresident_env) {
 
   # Handle env_col
@@ -277,6 +382,30 @@ calculate_SPM = function(data, env_col, trait_col, resident_env, nonresident_env
 
 ################################
 
+#' Plasticity ratio from ANOVA sums of squares
+#'
+#' For each trait column, fits a two-way ANOVA of the trait on population and
+#' environment, and computes the proportion of total sum of squares
+#' attributable to population.
+#'
+#' @param data A data frame containing trait, environment, and population
+#'   columns.
+#' @param env_col Column name (or numeric index / vector) identifying the
+#'   environment for each row of `data`.
+#' @param trait_cols Character or numeric vector identifying trait columns in
+#'   `data`.
+#' @param pop_col Column name (or numeric index / vector) identifying the
+#'   population for each row of `data`.
+#' @return A named numeric vector of plasticity ratios (`SS_pop / SS_total`),
+#'   one per trait in `trait_cols`.
+#' @examples
+#' df <- data.frame(
+#'   trait1 = c(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
+#'   env = rep(c("E1", "E2", "E3"), each = 4),
+#'   pop = rep(c("P1", "P2"), times = 6)
+#' )
+#' calculate_Plasticity_Ratio(df, env_col = "env", trait_cols = "trait1", pop_col = "pop")
+#' @export
 calculate_Plasticity_Ratio = function(data, env_col, trait_cols, pop_col) {
 
   # Handle env_col

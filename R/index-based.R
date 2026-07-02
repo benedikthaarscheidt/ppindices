@@ -1,3 +1,23 @@
+#' Grand plasticity index from adjusted environment means
+#'
+#' Fits a linear model of trait values on environment (optionally adjusting for
+#' a covariate), extracts adjusted (least-squares) means per environment via
+#' `emmeans`, and computes the coefficient of variation of those means, with an
+#' optional exclusion of a designated control environment.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_data Vector of environment labels, the same length as
+#'   `trait_values`; coerced to a factor.
+#' @param covariate_data Optional numeric covariate, the same length as
+#'   `trait_values`, added to the model as an additive term.
+#' @param control_env Optional environment label to exclude from the treatment
+#'   means before computing the index.
+#' @return A single numeric value: `sd(treatment_means) / mean(treatment_means)`.
+#' @examples
+#' trait_values <- c(2, 2.5, 3, 4, 4.5, 5, 6, 6.5, 7)
+#' env_data <- factor(rep(c("E1", "E2", "E3"), each = 3))
+#' calculate_grand_plasticity(trait_values, env_data)
+#' @export
 calculate_grand_plasticity = function(trait_values, env_data, covariate_data = NULL, control_env = NULL) {
 
   if (!requireNamespace("emmeans", quietly = TRUE)) {
@@ -34,6 +54,34 @@ calculate_grand_plasticity = function(trait_values, env_data, covariate_data = N
 
 ################################
 
+#' Pairwise phenotypic plasticity factor (PPF)
+#'
+#' For each pair of environment groups (all pairs by default), fits a linear
+#' model and computes the percentage difference between the least-squares means
+#' of the pair, then averages across pairs.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_groups Vector of environment group labels, the same length as
+#'   `trait_values`; coerced to a factor.
+#' @param covariate_values Optional numeric vector or data frame of covariates
+#'   to include additively in the model.
+#' @param env_pairs Optional list of environment-label pairs to evaluate.
+#'   Defaults to all pairwise combinations of `levels(env_groups)`.
+#' @return A single numeric value: the mean, across environment pairs, of
+#'   `100 * abs(LSM1 - LSM2) / LSM1`.
+#' @note The example below is illustrative only and is wrapped in `\dontrun{}`.
+#'   The function fits each pairwise model on locally renamed variables
+#'   (`subset_trait_values`, `subset_env_groups`) but then calls
+#'   `emmeans::emmeans(model, ~ env_groups)`, which looks for a term named
+#'   `env_groups` that the model does not contain, so it errors with
+#'   "No variable named env_groups in the reference grid".
+#' @examples
+#' \dontrun{
+#' trait_values <- c(2, 2.5, 3, 4, 4.5, 5)
+#' env_groups <- factor(rep(c("A", "B"), each = 3))
+#' calculate_PPF(trait_values, env_groups)
+#' }
+#' @export
 calculate_PPF = function(trait_values, env_groups, covariate_values = NULL, env_pairs = NULL) {
   # Ensure the environment groups are treated as factors
 
@@ -91,6 +139,24 @@ calculate_PPF = function(trait_values, env_groups, covariate_values = NULL, env_
 
 ################################
 
+#' Phenotypic plasticity index (Pi)
+#'
+#' Computes the classic `(max - min) / max` phenotypic plasticity index, either
+#' for a single numeric vector or for each of several trait columns in a data
+#' frame or matrix.
+#'
+#' @param data A numeric vector of trait values, or a data frame / matrix
+#'   containing one or more trait columns.
+#' @param trait_cols Optional character or numeric vector identifying trait
+#'   columns in `data`. When `NULL`, `data` is treated as a single numeric
+#'   vector.
+#' @return A single numeric value when `trait_cols` is `NULL`, or a named
+#'   numeric vector (one value per trait) otherwise.
+#' @examples
+#' calculate_Phenotypic_Plasticity_Index(c(2, 4, 6, 8))
+#' df <- data.frame(trait1 = c(2, 4, 6, 8), trait2 = c(1, 3, 5, 7))
+#' calculate_Phenotypic_Plasticity_Index(df, trait_cols = c("trait1", "trait2"))
+#' @export
 calculate_Phenotypic_Plasticity_Index = function(data, trait_cols = NULL) {
   if (is.null(trait_cols)) {
     # If trait_col is not provided, assume data is a numeric vector
@@ -122,6 +188,19 @@ calculate_Phenotypic_Plasticity_Index = function(data, trait_cols = NULL) {
 
 ################################
 
+#' Plasticity quotient (PQ)
+#'
+#' Computes the range of trait values standardized by the range of environment
+#' values.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env_values Optional numeric vector of environment values, the same
+#'   length as `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @return A single numeric value: `range(trait_values) / range(env_values)`.
+#'   Returns `NA` with a warning when the environment range is zero.
+#' @examples
+#' calculate_PQ(c(2, 4, 6, 8), env_values = c(1, 2, 3, 4))
+#' @export
 calculate_PQ = function(trait_values, env_values = NULL) {
   # Ensure trait_values is numeric
   if (!is.numeric(trait_values)) stop("trait_values must be a numeric vector.")
@@ -157,6 +236,22 @@ calculate_PQ = function(trait_values, env_values = NULL) {
 
 ################################
 
+#' Plasticity range (PR)
+#'
+#' Computes the range (max - min) of trait values, either across all
+#' environments at once or separately within each unique environment.
+#'
+#' @param trait_values Numeric vector of trait measurements across environments.
+#' @param env_values Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param across Logical; if `TRUE` (default), compute a single range across all
+#'   environments. If `FALSE`, compute the range within each unique environment.
+#' @return A single numeric value when `across = TRUE`, or a numeric vector (one
+#'   value per unique environment) when `across = FALSE`.
+#' @examples
+#' calculate_PR(c(2, 4, 6, 8), env_values = c(1, 2, 3, 4))
+#' calculate_PR(c(2, 4, 6, 8), env_values = c(1, 1, 2, 2), across = FALSE)
+#' @export
 calculate_PR = function(trait_values, env_values = NULL, across = TRUE) {
   # Ensure trait_values is numeric
   if (!is.numeric(trait_values)) stop("trait_values must be a numeric vector.")
@@ -193,6 +288,23 @@ calculate_PR = function(trait_values, env_values = NULL, across = TRUE) {
 
 ################################
 
+#' Norm-of-reaction width (NRW)
+#'
+#' Computes the range (max - min) of trait values, at the level of raw
+#' observations, environment means, or per-group environment means.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_values Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param group_values Optional vector of group labels (e.g. genotype), the
+#'   same length as `trait_values`, to compute NRW separately per group.
+#' @param across Logical; if `TRUE`, compute the range directly across raw
+#'   `trait_values` (ignoring environment grouping). Defaults to `FALSE`.
+#' @return A single numeric value (overall or per environment-mean range), or a
+#'   named numeric vector of per-group values when `group_values` is supplied.
+#' @examples
+#' calculate_NRW(c(2, 4, 6, 8), env_values = c(1, 1, 2, 2))
+#' @export
 calculate_NRW = function(trait_values, env_values = NULL, group_values = NULL, across = FALSE) {
   if (!is.numeric(trait_values)) stop("trait_values must be numeric.")
 
@@ -228,6 +340,22 @@ calculate_NRW = function(trait_values, env_values = NULL, group_values = NULL, a
 
 ################################
 
+#' Environment-specific plasticity (ESP)
+#'
+#' Computes, for each environment, the relative deviation of its mean trait
+#' value from the overall mean, and sums the absolute deviations across
+#' environments.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_values Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param env_subset Optional vector restricting the calculation to a subset of
+#'   environment labels.
+#' @return A single numeric value: the sum of absolute per-environment relative
+#'   deviations from the overall mean.
+#' @examples
+#' calculate_ESP(c(2, 4, 6, 8), env_values = c(1, 1, 2, 2))
+#' @export
 calculate_ESP = function(trait_values, env_values = NULL, env_subset = NULL) {
   if (!is.numeric(trait_values)) stop("trait_values must be numeric.")
 
@@ -257,6 +385,26 @@ calculate_ESP = function(trait_values, env_values = NULL, env_subset = NULL) {
 
 ################################
 
+#' Relative plasticity index (RPI)
+#'
+#' Computes the relative distance between trait values recorded in different
+#' environments, either for a single specified environment pair or averaged
+#' across all pairwise combinations of environments.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_values Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param env1 Optional label of the first environment in a specific pair to
+#'   compare.
+#' @param env2 Optional label of the second environment in a specific pair to
+#'   compare.
+#' @return A single numeric value: the mean relative distance
+#'   `abs(x1 - x2) / (x1 + x2)`, for the requested pair or averaged over all
+#'   pairs. Returns `NA` with a warning when fewer than two unique environments
+#'   are present.
+#' @examples
+#' calculate_RPI(c(2, 3, 6, 7), env_values = c(1, 1, 2, 2))
+#' @export
 calculate_RPI = function(trait_values, env_values = NULL, env1 = NULL, env2 = NULL) {
   # Ensure trait_values is numeric
   if (!is.numeric(trait_values)) stop("trait_values must be a numeric vector.")
@@ -320,6 +468,21 @@ calculate_RPI = function(trait_values, env_values = NULL, env1 = NULL, env2 = NU
 
 ################################
 
+#' Plasticity focus index (PFI)
+#'
+#' Identifies the sample with the largest absolute deviation from a baseline
+#' and expresses that deviation relative to its own baseline.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param baseline_values Optional numeric vector of baseline values, the same
+#'   length as `trait_values`. Defaults to the overall mean of `trait_values`
+#'   repeated for every sample.
+#' @return A single numeric value: `max(abs(trait - baseline)) / baseline` at
+#'   the sample of maximum deviation. Returns `NA` with a warning when that
+#'   baseline value is zero.
+#' @examples
+#' calculate_PFI(c(2, 4, 6, 8))
+#' @export
 calculate_PFI <- function(trait_values, baseline_values = NULL) {
   # Validate input for trait_values
   if (!is.numeric(trait_values)) {
@@ -364,6 +527,23 @@ calculate_PFI <- function(trait_values, baseline_values = NULL) {
 
 ################################
 
+#' Average plasticity of consecutive environments (APC)
+#'
+#' Orders observations by environment, computes per-environment means, and
+#' averages the absolute differences between consecutive environment means.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_labels Optional vector of environment labels, the same length as
+#'   `trait_values`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param sequential_env Logical; if `TRUE` (default), order environments
+#'   numerically/alphabetically (or by level for ordered factors). If `FALSE`,
+#'   preserve the order of first appearance.
+#' @return A single numeric value: the mean absolute difference between
+#'   consecutive environment means. Returns `NA` with a warning when fewer than
+#'   two unique environments are present.
+#' @examples
+#' calculate_APC(c(2, 4, 6, 8), env_labels = c(1, 1, 2, 2))
+#' @export
 calculate_APC <- function(trait_values, env_labels = NULL, sequential_env = TRUE) {
   # Input validation for trait_values
   if (!is.numeric(trait_values)) {
@@ -419,6 +599,27 @@ calculate_APC <- function(trait_values, env_labels = NULL, sequential_env = TRUE
 
 ################################
 
+#' Multivariate plasticity index (MVPi)
+#'
+#' Runs a PCA on a matrix of trait values, retains the first `n_axes` principal
+#' components, computes per-environment centroids in that reduced space, and
+#' summarizes plasticity as the mean pairwise Euclidean distance between
+#' centroids.
+#'
+#' @param trait_data A numeric matrix (or object coercible to one) of trait
+#'   values, with samples in rows and traits in columns.
+#' @param env Optional vector of environment labels, the same length as
+#'   `nrow(trait_data)`. Defaults to equidistant indices `1, 2, ..., n`.
+#' @param n_axes Number of leading principal component axes to retain. Defaults
+#'   to `1`.
+#' @return A single numeric value: the mean pairwise Euclidean distance between
+#'   environment centroids in PCA space. Returns `NA` with a warning when fewer
+#'   than two environments are present.
+#' @examples
+#' trait_data <- matrix(c(1, 2, 3, 2, 3, 4, 5, 6, 5, 6, 7, 6), ncol = 3, byrow = TRUE)
+#' env <- c("E1", "E1", "E2", "E2")
+#' calculate_MVPi(trait_data, env = env, n_axes = 2)
+#' @export
 calculate_MVPi <- function(trait_data, env = NULL, n_axes = 1) {
   # Convert trait_data to a numeric matrix if not already one.
   if (!is.matrix(trait_data)) {
@@ -476,6 +677,20 @@ calculate_MVPi <- function(trait_data, env = NULL, n_axes = 1) {
 
 ################################
 
+#' Plasticity response index (PRI)
+#'
+#' Computes the difference between mean trait values under an "extreme"
+#' condition and a "control" condition, relative to the overall mean.
+#'
+#' @param trait_values Numeric vector of trait measurements.
+#' @param env_indicator Binary vector (`0` = control, `1` = extreme), the same
+#'   length as `trait_values`.
+#' @return A single numeric value:
+#'   `(mean_extreme - mean_control) / overall_mean`. Returns `NA` with a
+#'   warning when the overall mean is zero.
+#' @examples
+#' calculate_PRI(c(2, 4, 6, 8), env_indicator = c(0, 0, 1, 1))
+#' @export
 calculate_PRI <- function(trait_values, env_indicator) {
   # Validate input
   if (!is.numeric(trait_values)) {
