@@ -1,0 +1,31 @@
+Package: ppindices
+Title: Phenotypic Plasticity Indices
+Version: 0.1.0
+Authors@R:
+    person("Benedikt", "Haarscheidt", email = "benedikt.haarscheidt@yahoo.de",
+           role = c("aut", "cre"))
+Description: A collection of implementations for quantifying phenotypic plasticity from
+    reaction-norm data. Provides functions to compute a broad range of plasticity indices
+    from trait values measured across environments.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 4.1)
+Imports:
+    stats,
+    utils,
+    dplyr,
+    purrr,
+    reshape2,
+    ggplot2,
+    agricolae,
+    emmeans,
+    VIM
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
