@@ -32,24 +32,30 @@ calculate_reaction_norm_slope = function(trait_values, environments=NULL) {
 #' Non-linear reaction norm score
 #'
 #' Fits a raw polynomial regression of the given degree to trait values across
-#' equidistant environments and summarizes non-linearity as the sum of the
-#' absolute values of the non-intercept coefficients.
+#' environments and summarizes non-linearity as the sum of the absolute values
+#' of the non-intercept coefficients.
 #'
 #' @param trait_values Numeric vector of trait measurements across environments.
 #' @param degree Integer polynomial degree to fit. Defaults to `2`.
+#' @param environments Optional numeric vector giving the environment value (the
+#'   x-position) of each trait measurement, the same length as `trait_values`.
+#'   Determines the spacing between points along the reaction norm. When `NULL`
+#'   (the default) the points are assumed equidistant (`seq_along(trait_values)`).
 #' @return A single numeric value: the nonlinearity score. Returns `NA` with a
 #'   warning when there are not enough data points for the requested degree.
-#' @note The example below is illustrative only and is wrapped in `\dontrun{}`
-#'   because the function body references an undefined `env` object when
-#'   building `newdata` for `predict()`, rather than its own `environments`
-#'   variable.
 #' @examples
-#' \dontrun{
 #' calculate_reaction_norm_non_linear(c(2, 4, 9, 16, 25), degree = 2)
-#' }
+#' # With explicit (non-equidistant) environment spacing:
+#' calculate_reaction_norm_non_linear(c(2, 4, 9, 16, 25),
+#'                                    environments = c(1, 2, 4, 8, 16))
 #' @export
-calculate_reaction_norm_non_linear <- function(trait_values, degree = 2) {
-  environments <- seq_along(trait_values)
+calculate_reaction_norm_non_linear <- function(trait_values, degree = 2,
+                                               environments = NULL) {
+  if (is.null(environments)) {
+    environments <- seq_along(trait_values)
+  } else if (length(environments) != length(trait_values)) {
+    stop("trait_values and environments must have the same length.")
+  }
 
   # Ensure there are enough data points for the model
   if (length(trait_values) < degree + 1) {
@@ -66,8 +72,6 @@ calculate_reaction_norm_non_linear <- function(trait_values, degree = 2) {
   })
 
   if (is.null(model)) return(NA)
-  fitted_vals <- predict(model, newdata = data.frame(env = env))
-  range_val    <- max(fitted_vals) - min(fitted_vals)
   # Extract coefficients (first coefficient is the intercept)
   coefs <- coef(model)
 

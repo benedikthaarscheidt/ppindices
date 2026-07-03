@@ -12,9 +12,6 @@
 "_PACKAGE"
 
 ## Names that appear as bare (unquoted) symbols in non-standard evaluation
-## contexts, or that are referenced without being defined (pre-existing bugs
-## in the ported reference implementations; see calculate_CVm() and
-## calculate_reaction_norm_non_linear() documentation). Declared here only to
-## silence R CMD check's "no visible binding for global variable" NOTE; the
-## underlying behaviour of these functions is intentionally left unchanged.
-utils::globalVariables(c("env", "group_labels", "Combined_Factors", "Trait_Value"))
+## contexts. Declared here only to silence R CMD check's "no visible binding
+## for global variable" NOTE.
+utils::globalVariables(c("Combined_Factors", "Trait_Value"))

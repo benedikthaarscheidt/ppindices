@@ -123,7 +123,9 @@ calculate_PPF = function(trait_values, env_groups, covariate_values = NULL, env_
       formula = as.formula("trait_values ~ env_groups + .")
       model = lm(formula, data = data)
     } else {
-      model = lm(subset_trait_values ~ subset_env_groups)
+      data = data.frame(trait_values = subset_trait_values,
+                        env_groups = subset_env_groups)
+      model = lm(trait_values ~ env_groups, data = data)
     }
 
     # Calculate least square means (LSMs) for the current environment pair

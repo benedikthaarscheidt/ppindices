@@ -36,24 +36,20 @@ calculate_CVt = function(trait_values) {
 #' @param env_values Optional grouping vector used to split `trait_values` when
 #'   `trait_values` is not already a list.
 #' @return A single numeric value: the coefficient of variation of the group means.
-#' @note The example below is illustrative only and is wrapped in `\dontrun{}`
-#'   because the non-list branch of this function references an undefined
-#'   `group_labels` object rather than its `env_values` argument.
 #' @examples
-#' \dontrun{
 #' calculate_CVm(list(c(2, 3, 4), c(5, 6, 7), c(1, 2, 3)))
-#' }
+#' calculate_CVm(c(2, 3, 4, 6, 7, 8), env_values = c(1, 1, 1, 2, 2, 2))
 #' @export
 calculate_CVm = function(trait_values, env_values = NULL) {
   # Handle case where trait_values is a list of vectors
   if (is.list(trait_values)) {
     # Calculate group means directly
     group_means = sapply(trait_values, mean, na.rm = TRUE)
-  } else if (!is.null(group_labels)) {
-    # Calculate group means based on group labels
-    group_means = tapply(trait_values, group_labels, mean, na.rm = TRUE)
+  } else if (!is.null(env_values)) {
+    # Calculate group means based on env_values
+    group_means = tapply(trait_values, env_values, mean, na.rm = TRUE)
   } else {
-    stop("If trait_values is not a list, group_labels must be provided.")
+    stop("If trait_values is not a list, env_values must be provided.")
   }
 
   # Calculate standard deviation and mean of group means

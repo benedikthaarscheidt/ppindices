@@ -21,13 +21,7 @@ Computes the coefficient of variation across group (e.g. environment) means of
 a trait, where groups are supplied either as a list of vectors or via
 \code{group_labels}.
 }
-\note{
-The example below is illustrative only and is wrapped in \verb{\dontrun{}}
-because the non-list branch of this function references an undefined
-\code{group_labels} object rather than its \code{env_values} argument.
-}
 \examples{
-\dontrun{
 calculate_CVm(list(c(2, 3, 4), c(5, 6, 7), c(1, 2, 3)))
-}
+calculate_CVm(c(2, 3, 4, 6, 7, 8), env_values = c(1, 1, 1, 2, 2, 2))
 }

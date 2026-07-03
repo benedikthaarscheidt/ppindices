@@ -4,12 +4,21 @@
 \alias{calculate_reaction_norm_non_linear}
 \title{Non-linear reaction norm score}
 \usage{
-calculate_reaction_norm_non_linear(trait_values, degree = 2)
+calculate_reaction_norm_non_linear(
+  trait_values,
+  degree = 2,
+  environments = NULL
+)
 }
 \arguments{
 \item{trait_values}{Numeric vector of trait measurements across environments.}
 
 \item{degree}{Integer polynomial degree to fit. Defaults to \code{2}.}
+
+\item{environments}{Optional numeric vector giving the environment value (the
+x-position) of each trait measurement, the same length as \code{trait_values}.
+Determines the spacing between points along the reaction norm. When \code{NULL}
+(the default) the points are assumed equidistant (\code{seq_along(trait_values)}).}
 }
 \value{
 A single numeric value: the nonlinearity score. Returns \code{NA} with a
@@ -17,17 +26,12 @@ warning when there are not enough data points for the requested degree.
 }
 \description{
 Fits a raw polynomial regression of the given degree to trait values across
-equidistant environments and summarizes non-linearity as the sum of the
-absolute values of the non-intercept coefficients.
-}
-\note{
-The example below is illustrative only and is wrapped in \verb{\dontrun{}}
-because the function body references an undefined \code{env} object when
-building \code{newdata} for \code{predict()}, rather than its own \code{environments}
-variable.
+environments and summarizes non-linearity as the sum of the absolute values
+of the non-intercept coefficients.
 }
 \examples{
-\dontrun{
 calculate_reaction_norm_non_linear(c(2, 4, 9, 16, 25), degree = 2)
-}
+# With explicit (non-equidistant) environment spacing:
+calculate_reaction_norm_non_linear(c(2, 4, 9, 16, 25),
+                                   environments = c(1, 2, 4, 8, 16))
 }

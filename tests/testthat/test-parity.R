@@ -1,25 +1,17 @@
 test_that("packaged indices reproduce reference outputs bit-for-bit", {
+  # Golden values captured from the original implementations in
+  # CRC_1644_Z2_GWAS_simple/R-files/Plasticity_scores/ (see helper for the
+  # shared inputs and call map). Every exported calculate_* index is covered.
   expected <- readRDS(test_path("fixtures", "parity.rds"))
-  i <- parity_inputs()
-  got <- suppressWarnings(list(
-    calculate_CVt                 = calculate_CVt(i$trait2),
-    calculate_reaction_norm_slope = calculate_reaction_norm_slope(i$trait, i$env),
-    calculate_D_slope             = calculate_D_slope(i$trait2),
-    calculate_RC                  = calculate_RC(i$trait2),
-    calculate_CEV                 = calculate_CEV(i$trait2),
-    calculate_PSI                 = calculate_PSI(i$trait2, i$env),
-    calculate_PQ                  = calculate_PQ(i$trait2, i$env),
-    calculate_PR                  = calculate_PR(i$trait2, i$env),
-    calculate_ESP                 = calculate_ESP(i$trait2, i$env),
-    calculate_SI                  = calculate_SI(i$trait2),
-    calculate_RSI                 = calculate_RSI(i$trait2),
-    calculate_EVS                 = calculate_EVS(i$trait2),
-    calculate_rdpi                = calculate_rdpi(i$trait2, i$env),
-    calculate_ESPI                = calculate_ESPI(i$trait2, i$env),
-    calculate_espiid              = calculate_espiid(i$trait2),
-    calculate_finlay_wilkinson    = calculate_finlay_wilkinson(i$gxe)
-  ))
+  calls <- parity_calls(getNamespace("ppindices"))
+
+  # The fixture defines the comparable set; every entry must have a call.
+  missing <- setdiff(names(expected), names(calls))
+  expect_identical(missing, character(0),
+                   info = paste("no call for:", paste(missing, collapse = ", ")))
+
   for (nm in names(expected)) {
-    expect_equal(got[[nm]], expected[[nm]], tolerance = 0, info = nm)
+    got <- suppressWarnings(suppressMessages(calls[[nm]]()))
+    expect_equal(got, expected[[nm]], tolerance = 0, info = nm)
   }
 })
