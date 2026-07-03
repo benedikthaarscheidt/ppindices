@@ -2,7 +2,7 @@
 % Please edit documentation in R/index-based.R
 \name{calculate_APC}
 \alias{calculate_APC}
-\title{Average plasticity of consecutive environments (APC)}
+\title{Absolute Plasticity Coefficient (APC)}
 \usage{
 calculate_APC(trait_values, env_labels = NULL, sequential_env = TRUE)
 }

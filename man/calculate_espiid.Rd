@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_espiid}
 \alias{calculate_espiid}
-\title{Environment-standardized plasticity index with individual distances (ESPIID)}
+\title{Environmental Sensitivity Performance Index for Individual Differences (ESPIID)}
 \usage{
 calculate_espiid(trait_values, use_median = FALSE)
 }

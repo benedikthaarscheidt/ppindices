@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_TPS}
 \alias{calculate_TPS}
-\title{Transplant phenotypic shift (TPS)}
+\title{Transplant Plasticity Score (TPS)}
 \usage{
 calculate_TPS(trait_values, env_values, native_env, transplanted_env)
 }

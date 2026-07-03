@@ -2,7 +2,7 @@
 % Please edit documentation in R/variance-based.R
 \name{calculate_CVmd}
 \alias{calculate_CVmd}
-\title{Coefficient of variation of group medians (CVmd)}
+\title{Coefficient of variation of medians (CVmd)}
 \usage{
 calculate_CVmd(trait_values, group_labels = NULL)
 }

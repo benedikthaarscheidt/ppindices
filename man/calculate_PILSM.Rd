@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_PILSM}
 \alias{calculate_PILSM}
-\title{Least-squares-mean phenotypic plasticity index (PILSM)}
+\title{Proportional Inter-Least Square Mean Difference (PILSM)}
 \usage{
 calculate_PILSM(trait_values, env, covariates = NULL)
 }

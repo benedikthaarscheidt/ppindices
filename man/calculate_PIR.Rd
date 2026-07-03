@@ -2,7 +2,7 @@
 % Please edit documentation in R/slope-based.R
 \name{calculate_PIR}
 \alias{calculate_PIR}
-\title{Plasticity index at relative growth rate maximum (PIR)}
+\title{Phenotypic Instability Ratio (PIR)}
 \usage{
 calculate_PIR(trait_values, env_values = NULL, rgr_values = NULL)
 }

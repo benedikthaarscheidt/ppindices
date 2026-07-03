@@ -2,7 +2,7 @@
 % Please edit documentation in R/variance-based.R
 \name{calculate_PSI}
 \alias{calculate_PSI}
-\title{Plasticity stability score (PSI)}
+\title{Plasticity stability Index (PSI)}
 \usage{
 calculate_PSI(trait_values, env_values = NULL)
 }

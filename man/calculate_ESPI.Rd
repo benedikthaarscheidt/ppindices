@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_ESPI}
 \alias{calculate_ESPI}
-\title{Environment-standardized plasticity index (ESPI)}
+\title{Environmental Sensitivity Performance Index (ESPI)}
 \usage{
 calculate_ESPI(trait_values, env_values = NULL)
 }

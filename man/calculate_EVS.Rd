@@ -2,7 +2,7 @@
 % Please edit documentation in R/variance-based.R
 \name{calculate_EVS}
 \alias{calculate_EVS}
-\title{Environmental variance sensitivity (EVS)}
+\title{Environmental Variance Sensitivity (EVS)}
 \usage{
 calculate_EVS(trait_values, env = NULL)
 }

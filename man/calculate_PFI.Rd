@@ -2,7 +2,7 @@
 % Please edit documentation in R/index-based.R
 \name{calculate_PFI}
 \alias{calculate_PFI}
-\title{Plasticity focus index (PFI)}
+\title{Phenotypic Flexibility Index (PFI)}
 \usage{
 calculate_PFI(trait_values, baseline_values = NULL)
 }

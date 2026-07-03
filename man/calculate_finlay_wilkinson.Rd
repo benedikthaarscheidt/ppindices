@@ -2,7 +2,7 @@
 % Please edit documentation in R/slope-based.R
 \name{calculate_finlay_wilkinson}
 \alias{calculate_finlay_wilkinson}
-\title{Finlay-Wilkinson stability regression}
+\title{Finlay-Wilkinson regression}
 \usage{
 calculate_finlay_wilkinson(
   Y,

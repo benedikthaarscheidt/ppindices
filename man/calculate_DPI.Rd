@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_DPI}
 \alias{calculate_DPI}
-\title{Daily plasticity index (DPI)}
+\title{Developmental Plasticity Index (DPI)}
 \usage{
 calculate_DPI(trait_values_time1, trait_values_time2, time_interval = NULL)
 }

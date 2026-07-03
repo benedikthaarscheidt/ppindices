@@ -2,7 +2,7 @@
 % Please edit documentation in R/slope-based.R
 \name{calculate_RTR}
 \alias{calculate_RTR}
-\title{Relative trait range (RTR)}
+\title{Relative Trait Response (RTR)}
 \usage{
 calculate_RTR(trait_values, env_values, env_low = 0.2, env_high = 0.2)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_FPI}
 \alias{calculate_FPI}
-\title{Fitness-relative plasticity index (FPI)}
+\title{Fitness Plasticity Index (FPI)}
 \usage{
 calculate_FPI(trait_values, env_values = NULL, control_stress = NULL)
 }

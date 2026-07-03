@@ -2,7 +2,7 @@
 % Please edit documentation in R/variance-based.R
 \name{calculate_CVm}
 \alias{calculate_CVm}
-\title{Coefficient of variation of group means (CVm)}
+\title{Coefficient of variation of means (CVm)}
 \usage{
 calculate_CVm(trait_values, env_values = NULL)
 }

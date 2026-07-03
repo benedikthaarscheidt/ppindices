@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_PImd}
 \alias{calculate_PImd}
-\title{Median-based phenotypic plasticity index (PImd)}
+\title{Proportional Inter-Median Difference (PImd)}
 \usage{
 calculate_PImd(trait_values, env)
 }

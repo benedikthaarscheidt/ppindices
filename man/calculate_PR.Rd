@@ -2,7 +2,7 @@
 % Please edit documentation in R/index-based.R
 \name{calculate_PR}
 \alias{calculate_PR}
-\title{Plasticity range (PR)}
+\title{Phenotypic Range (PR)}
 \usage{
 calculate_PR(trait_values, env_values = NULL, across = TRUE)
 }

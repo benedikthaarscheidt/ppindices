@@ -2,7 +2,7 @@
 % Please edit documentation in R/index-based.R
 \name{calculate_PPF}
 \alias{calculate_PPF}
-\title{Pairwise phenotypic plasticity factor (PPF)}
+\title{Phenotypic Plasticity Factor (PPF)}
 \usage{
 calculate_PPF(
   trait_values,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/distance-based.R
 \name{calculate_general_PD}
 \alias{calculate_general_PD}
-\title{General phenotypic distance (PD)}
+\title{General Plasticity Differential (PD)}
 \usage{
 calculate_general_PD(
   trait_values,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/index-based.R
 \name{calculate_ESP}
 \alias{calculate_ESP}
-\title{Environment-specific plasticity (ESP)}
+\title{Environmental Sensitivity Performance (ESP)}
 \usage{
 calculate_ESP(trait_values, env_values = NULL, env_subset = NULL)
 }
