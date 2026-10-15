@@ -24,7 +24,7 @@ calculate_reaction_norm_slope = function(trait_values, environments=NULL) {
 
   lm_fit = lm(trait_values ~ environments)
 
-  return(unname(abs(coef(lm_fit)["environments"]))
+  return(unname(abs(coef(lm_fit)["environments"])))
 }
 
 ################################
