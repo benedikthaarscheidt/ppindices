@@ -205,7 +205,7 @@ calculate_RTR = function(trait_values, env_values, env_low = 0.2, env_high = 0.2
   mean_high = mean(trait_values[high_idx], na.rm = TRUE)
 
   # Calculate the RTR value
-  RTR_value = (mean_high - mean_low) / max(abs(trait_values), na.rm = TRUE)
+  RTR_value = abs((mean_high - mean_low) / max(abs(trait_values), na.rm = TRUE))
 
   return(RTR_value)
 }
