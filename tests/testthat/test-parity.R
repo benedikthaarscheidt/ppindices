@@ -10,7 +10,11 @@ test_that("packaged indices reproduce reference outputs bit-for-bit", {
   expect_identical(missing, character(0),
                    info = paste("no call for:", paste(missing, collapse = ", ")))
 
-  for (nm in names(expected)) {
+  # Intentional deviations from the reference implementations, each covered by
+  # test-behaviour.R: calculate_reaction_norm_non_linear fits orthogonal instead
+  # of raw polynomials (uncorrelated components in trait units).
+  deviations <- c("calculate_reaction_norm_non_linear")
+  for (nm in setdiff(names(expected), deviations)) {
     got <- suppressWarnings(suppressMessages(calls[[nm]]()))
     expect_equal(got, expected[[nm]], tolerance = 0, info = nm)
   }

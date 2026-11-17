@@ -31,9 +31,14 @@ calculate_reaction_norm_slope = function(trait_values, environments=NULL) {
 
 #' Non-linear reaction norm score
 #'
-#' Fits a raw polynomial regression of the given degree to trait values across
-#' environments and summarizes non-linearity as the sum of the absolute values
-#' of the non-intercept coefficients.
+#' Fits a polynomial regression of the given degree to trait values across
+#' environments, on orthogonal polynomials of the environments, and summarizes
+#' the reaction norm as the sum of the absolute values of the non-intercept
+#' coefficients. The coefficients are the linear, quadratic, ... components of
+#' the reaction norm in trait units: they are uncorrelated, each has the noise of
+#' a single measurement, and they do not depend on how the environments are
+#' coded. A straight line with slope b scores |b| * sqrt(sum((env - mean(env))^2)),
+#' curvature adds the higher components.
 #'
 #' @param trait_values Numeric vector of trait measurements across environments.
 #' @param degree Integer polynomial degree to fit. Defaults to `2`.
@@ -63,9 +68,9 @@ calculate_reaction_norm_non_linear <- function(trait_values, degree = 2,
     return(NA)
   }
 
-  # Fit the polynomial model using raw polynomial terms
+  # Fit the polynomial model on orthogonal polynomials of the environments
   model <- tryCatch({
-    lm(trait_values ~ poly(environments, degree, raw = TRUE))
+    lm(trait_values ~ poly(environments, degree))
   }, error = function(e) {
     warning("Model fitting failed; returning NA.")
     return(NULL)

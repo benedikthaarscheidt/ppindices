@@ -51,11 +51,27 @@ test_that("rdpi_mean_calculation returns a long-format data frame of pairwise RD
 test_that("calculate_reaction_norm_non_linear returns the nonlinearity score", {
   # Regression for the fixed `env`-not-found bug: the function used to reference
   # an undefined `env` object in dead code and errored for every input. The
-  # score is the sum of |coefficients| of the raw polynomial fit, excluding the
-  # intercept. Oracle computed independently from a plain lm().
+  # score is the sum of |coefficients| of the orthogonal polynomial fit,
+  # excluding the intercept. Oracle computed independently from a plain lm().
   y <- c(1, 4, 2, 9, 3)
-  coefs <- coef(lm(y ~ poly(seq_along(y), 2, raw = TRUE)))
+  coefs <- coef(lm(y ~ poly(seq_along(y), 2)))
   expect_equal(calculate_reaction_norm_non_linear(y, degree = 2), sum(abs(coefs[-1])))
+})
+
+test_that("calculate_reaction_norm_non_linear of a straight line is its linear component", {
+  # Orthonormal basis: a line with slope b has only the linear component,
+  # |b| * sqrt(sum((x - mean(x))^2)); the higher components are zero.
+  x <- 1:6
+  y <- 2 + 0.5 * x
+  expect_equal(calculate_reaction_norm_non_linear(y, degree = 3), 0.5 * sqrt(sum((x - mean(x))^2)))
+})
+
+test_that("calculate_reaction_norm_non_linear does not depend on the coding of the environments", {
+  # An affine recoding of the environments leaves the orthogonal components unchanged.
+  y   <- c(1, 4, 2, 9, 3, 5)
+  env <- 1:6
+  expect_equal(calculate_reaction_norm_non_linear(y, environments = 10 + 9 * env, degree = 3),
+               calculate_reaction_norm_non_linear(y, environments = env, degree = 3))
 })
 
 test_that("calculate_reaction_norm_non_linear honours non-equidistant environments", {
@@ -63,7 +79,7 @@ test_that("calculate_reaction_norm_non_linear honours non-equidistant environmen
   # score); NULL falls back to equidistant seq_along().
   y   <- c(1, 4, 2, 9, 3)
   env <- c(1, 2, 4, 8, 16)
-  coefs <- coef(lm(y ~ poly(env, 2, raw = TRUE)))
+  coefs <- coef(lm(y ~ poly(env, 2)))
   expect_equal(calculate_reaction_norm_non_linear(y, environments = env, degree = 2),
                sum(abs(coefs[-1])))
   # Explicit equidistant spacing matches the default.
